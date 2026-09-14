@@ -1,0 +1,80 @@
+#include <stdio.h>
+#include <string.h>
+
+void xorEncrypt(char *data, const char *key) {
+    int keyLen = strlen(key);
+    for (int i = 0; data[i] != '\0'; ++i) {
+        data[i] ^= key[i % keyLen];
+    }
+}
+
+int main() {
+    char choice[10];
+    printf("Enter 'encrypt' or 'decrypt': ");
+    scanf("%s", choice);
+
+    if (strcmp(choice, "encrypt") == 0) {
+        char message[256];
+        char filename[256];
+        char key[256];
+
+        printf("Enter the message to encrypt: ");
+        fgets(message, sizeof(message), stdin);
+        message[strcspn(message, "\n")] = '\0';
+
+        printf("Enter the filename to save the encrypted data: ");
+        scanf("%s", filename);
+
+        printf("Enter the key for encryption: ");
+        scanf("%s", key);
+
+        FILE *file = fopen(filename, "w");
+        if (file == NULL) {
+            perror("Error opening file for writing");
+            return 1;
+        }
+
+        xorEncrypt(message, key);
+        fprintf(file, "%s", message);
+        fclose(file);
+    } else if (strcmp(choice, "decrypt") == 0) {
+        char filename[256];
+        char key[256];
+
+        printf("Enter the filename containing the encrypted data: ");
+        scanf("%s", filename);
+
+        printf("Enter the key for decryption: ");
+        scanf("%s", key);
+
+        FILE *file = fopen(filename, "r");
+        if (file == NULL) {
+            perror("Error opening file for reading");
+            return 1;
+        }
+
+        fseek(file, 0, SEEK_END);
+        long fileSize = ftell(file);
+        fseek(file, 0, SEEK_SET);
+
+        char *encryptedData = malloc(fileSize + 1);
+        if (encryptedData == NULL) {
+            perror("Error allocating memory for encrypted data");
+            fclose(file);
+            return 1;
+        }
+
+        fread(encryptedData, sizeof(char), fileSize, file);
+        encryptedData[fileSize] = '\0';
+        fclose(file);
+
+        xorEncrypt(encryptedData, key);
+        printf("Decrypted message: %s\n", encryptedData);
+
+        free(encryptedData);
+    } else {
+        printf("Invalid choice. Please enter 'encrypt' or 'decrypt'.\n");
+    }
+
+    return 0;
+}
