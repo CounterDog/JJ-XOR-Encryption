@@ -38,6 +38,14 @@ int main() {
             return 1;
         }
 
+        if (strlen(key) == 0){
+            perror("Key is empty; XOR encryption cannot be performed");
+            return 0;
+        } if (strlen(message) == 0){
+            perror("Message is empty; XOR encryption cannot be performed");
+            return 0;
+        }
+
         xorEncrypt(message, key);
         fprintf(file, "%s", message);
         fclose(file);
@@ -74,6 +82,25 @@ int main() {
         fread(encryptedData, sizeof(char), fileSize, file);
         encryptedData[fileSize] = '\0';
         fclose(file);
+
+        if (strlen(key) == 0){
+            perror("Key is empty; XOR decryption cannot be performed");
+            free(encryptedData);
+            return 1;
+        } if (strlen(encryptedData) == 0){
+            perror("Message is empty; XOR decryption cannot be performed");
+            free(encryptedData);
+            return 1;
+        if (strlen(key) == 0){
+            perror("Key is empty; XOR decryption cannot be performed");
+            free(encryptedData);
+            return 1;
+        } if (strlen(encryptedData) == 0){
+            perror("Message is empty; XOR decryption cannot be performed");
+            free(encryptedData);
+            return 1;
+        }
+        }
 
         xorEncrypt(encryptedData, key);
         printf("Decrypted message: %s\n", encryptedData);
