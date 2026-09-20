@@ -4,9 +4,7 @@
 
 void xorEncrypt(char *data, const char *key) {
     int keyLen = strlen(key);
-    for (int i = 0; data[i] != '\0'; ++i) {
-        data[i] ^= key[i % keyLen];
-    }
+    for (int i = 0; data[i] != '\0'; ++i) data[i] ^= key[i % keyLen];
 }
 
 int main() {
@@ -32,6 +30,11 @@ int main() {
         fgets(key, sizeof(key), stdin);
         key[strcspn(key, "\n")] = '\0';
 
+        if (key[0] == '\0') {
+            printf("Error: encryption key cannot be empty.\n");
+            return 1;
+        }
+
         FILE *file = fopen(filename, "w");
         if (file == NULL) {
             perror("Error opening file for writing");
@@ -54,6 +57,11 @@ int main() {
         fgets(key, sizeof(key), stdin);
         key[strcspn(key, "\n")] = '\0';
 
+        if (key[0] == '\0') {
+            printf("Error: encryption key cannot be empty.\n");
+            return 1;
+        }
+
         FILE *file = fopen(filename, "r");
         if (file == NULL) {
             perror("Error opening file for reading");
@@ -73,9 +81,16 @@ int main() {
 
         fread(encryptedData, sizeof(char), fileSize, file);
         encryptedData[fileSize] = '\0';
-        fclose(file);
 
-        xorEncrypt(encryptedData, key);
+        if (encryptedData[0] == '\0') {
+            printf("Error: encrypted message is empty.\n");
+            free(encryptedData);
+            fclose(file);
+            return 1;
+        }
+
+        fclose(file);
+        
         printf("Decrypted message: %s\n", encryptedData);
 
         free(encryptedData);
