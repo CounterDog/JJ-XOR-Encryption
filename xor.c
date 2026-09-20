@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <string.h>
-#include <stdlib.h>
 
 void xorEncrypt(char *data, const char *key) {
     int keyLen = strlen(key);
@@ -10,11 +9,10 @@ void xorEncrypt(char *data, const char *key) {
 }
 
 int main() {
-    char choice[9];
+    char choice[10];
     printf("Enter 'encrypt' or 'decrypt': ");
-    fgets(choice, sizeof(choice), stdin);
-    choice[strcspn(choice, "\n")] = '\0';
-    
+    scanf("%s", choice);
+
     if (strcmp(choice, "encrypt") == 0) {
         char message[256];
         char filename[256];
@@ -25,12 +23,10 @@ int main() {
         message[strcspn(message, "\n")] = '\0';
 
         printf("Enter the filename to save the encrypted data: ");
-        fgets(filename, sizeof(filename), stdin);
-        filename[strcspn(filename, "\n")] = '\0';
+        scanf("%s", filename);
 
         printf("Enter the key for encryption: ");
-        fgets(key, sizeof(key), stdin);
-        key[strcspn(key, "\n")] = '\0';
+        scanf("%s", key);
 
         FILE *file = fopen(filename, "w");
         if (file == NULL) {
@@ -49,18 +45,15 @@ int main() {
         xorEncrypt(message, key);
         fprintf(file, "%s", message);
         fclose(file);
-
     } else if (strcmp(choice, "decrypt") == 0) {
         char filename[256];
         char key[256];
 
         printf("Enter the filename containing the encrypted data: ");
-        fgets(filename, sizeof(filename), stdin);
-        filename[strcspn(filename, "\n")] = '\0';
+        scanf("%s", filename);
 
         printf("Enter the key for decryption: ");
-        fgets(key, sizeof(key), stdin);
-        key[strcspn(key, "\n")] = '\0';
+        scanf("%s", key);
 
         FILE *file = fopen(filename, "r");
         if (file == NULL) {
